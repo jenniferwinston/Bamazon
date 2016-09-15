@@ -63,13 +63,14 @@ var nextAsk = function (){
 	{
 		name: "productunits",
 		type: "input",
-		message: "How many units of this product would you like to puchase?"
-		// validate: function(value) {
-		// 	if (isNaN(value) == false) {
-		// 		return true;
-		// 	}
-		// 	else { return false; }
-		// }
+		message: "How many units of this product would you like to puchase?",
+		validate: function(value) {
+            if (isNaN(value) == false) {
+                return true;
+            } else {
+                return false;
+            }
+        }
 	}]).then(function(answer) {
 			checkQuantity(answer);
 	})
@@ -96,7 +97,7 @@ var updateQuantity = function (id, total, newQuantity){
 
 };
 
-
+connection.end();
 
 
 
