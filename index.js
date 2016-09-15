@@ -46,7 +46,7 @@ connection.query('SELECT * FROM products', function(err, res) {
         console.log(res[i].itemID + " | " + res[i].productName + " | " + res[i].departmentName + " | " + "$" + res[i].price);
     }
     console.log("-----------------------------------");
-    // asks the next question ater 5 seconds
+    // asks the next question ater 3 seconds
     setTimeout(function() {nextAsk();}, 3000);
 })
 };
@@ -82,27 +82,39 @@ var checkQuantity = function(answer) {
 	var query = 'SELECT stockQuantity, price FROM products WHERE itemID =?';
 	var params = answer.productid;
 
-	connection.query(query, params, function(err, res) {
-		if ( res[0].stockQuantity < answer.productunits) {
-			console.log("Insufficient quantity");
-			nextAsk(1);
+		connection.query(query, params, function(err, res) {
+			if ( res[0].stockQuantity < answer.productunits) {
+				console.log("Insufficient quantity");
+				nextAsk(1);
+			}
+			else {
+				// calculate the total by pulling the price and multiple by product wanted	
+				var total = answer.productunits * res[0].price;
+				var newQuantity = res[0].stockQuantity-answer.quantity;
+				
+				console.log("Total Cost: $" + total);
+
+				connection.query("UPDATE products SET stockQuantity= " + newQuantity + "WHERE itemID = " + answer.productunits, function (err, res) {
+				console.log(res[0].stockQuantity + " " + newQuantity);
+				console.log("Thanks for shopping");
+				})
 		}
-		else {
-			// calculate the total by pulling the price and multiple by product wanted	
-			var total = answer.productunits * res[0].price;
-			var newQuantity = res[0].stockQuantity-answer.quantity;
-			updateQuantity(answer.productid, total, newQuantity);
-			console.log("Total: $" + total);
-		}
-	})
 
-};
+	});
+}
 
-var updateQuantity = function (id, total, newQuantity){
 
-};
+	
 
-// connection.end();
+	// 	setTimeout(function(){
+	// 			console.log("Thanks for shopping with us!");
+	// 			process.exit();
+	// 		},3000);
+	// })
+	// connection.end();
+
+
+
 
 
 
