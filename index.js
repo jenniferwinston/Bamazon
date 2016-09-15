@@ -47,11 +47,11 @@ connection.query('SELECT * FROM products', function(err, res) {
     }
     console.log("-----------------------------------");
     // asks the next question ater 5 seconds
-    setTimeout(function() {nextAsk();}, 5000);
+    setTimeout(function() {nextAsk();}, 3000);
 })
 };
 
-
+// prompt next questions to find out what customer wants
 var nextAsk = function (){
 	inquirer.prompt([
 	{
@@ -76,18 +76,23 @@ var nextAsk = function (){
 	})
 };
 
+// compare product units wanted vs available products
 var checkQuantity = function(answer) {
+	console.log("Checking my stock");
 	var query = 'SELECT stockQuantity, price FROM products WHERE itemID =?';
 	var params = answer.productid;
 
 	connection.query(query, params, function(err, res) {
 		if ( res[0].stockQuantity < answer.productunits) {
 			console.log("Insufficient quantity");
+			nextAsk(1);
 		}
 		else {
+			// calculate the total by pulling the price and multiple by product wanted	
 			var total = answer.productunits * res[0].price;
 			var newQuantity = res[0].stockQuantity-answer.quantity;
 			updateQuantity(answer.productid, total, newQuantity);
+			console.log("Total: $" + total);
 		}
 	})
 
@@ -97,7 +102,7 @@ var updateQuantity = function (id, total, newQuantity){
 
 };
 
-connection.end();
+// connection.end();
 
 
 
