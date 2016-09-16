@@ -72,6 +72,7 @@ var nextAsk = function (){
             }
         }
 	}]).then(function(answer) {
+		console.log("-----------CHECK OUT------------------------");
 			checkQuantity(answer);
 	})
 };
@@ -94,24 +95,26 @@ var checkQuantity = function(answer) {
 				
 				console.log("Total Cost: $" + total);
 
-				connection.query("UPDATE products SET stockQuantity= " + newQuantity + "WHERE itemID = " + answer.productunits, function (err, res) {
-				console.log(res[0].stockQuantity + " " + newQuantity);
-				console.log("Thanks for shopping");
-				})
-		}
+				connection.query("UPDATE `products` SET stockQuantity = (stockQuantity - ?) WHERE id = ?;", [answer.productunits, answer.productid], function(err, res){
+					
+						console.log("Your order had been processed at $" + total);
+					});
+				
+				}
+		});
 
-	});
-}
+	
+			setTimeout(function(){
+				console.log("Thanks for shopping with us!");
+			},3000);
+	
+	
+};
 
 
 	
 
-	// 	setTimeout(function(){
-	// 			console.log("Thanks for shopping with us!");
-	// 			process.exit();
-	// 		},3000);
-	// })
-	// connection.end();
+	
 
 
 
